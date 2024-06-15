@@ -32,10 +32,10 @@ namespace ClaseHilos
         static new Mutex mutex = new Mutex();
 
         // Declaramos barrera
-        static new Barrier barrera = new Barrier(2, (b) =>
+        static new Barrier barrera = new Barrier(3, (b) =>
         {
             Console.WriteLine($"Post-Phase action: {b.CurrentPhaseNumber}");
-            Tarea3();
+            Tarea4();
         });
 
         // Actualizacion de stock
@@ -66,7 +66,20 @@ namespace ClaseHilos
             // Espera a que el otro hilo llegue si es que no llego
             barrera.SignalAndWait();
         }
+
+        // Esta tarea se agrega para cumplir con la condicion del punto dos
         static void Tarea3()
+        {
+            Console.WriteLine("Actualizacion de los precios un 10%");
+            foreach(var producto in productos) 
+            {
+                producto.PrecioUnitarioDolares *= 1.10m;
+            }
+            Console.WriteLine("Precios de los productos actualizados");
+            barrera.SignalAndWait();
+        }
+
+        static void Tarea4()
         {
             // pasamos dolares a pesos
             Console.WriteLine("Listando productos");
@@ -89,8 +102,10 @@ namespace ClaseHilos
             // instanciamos los hilos
             Thread task1 = new Thread(Tarea1);
             Thread task2 = new Thread(Tarea2);
+            Thread task3 = new Thread(Tarea3);
             task1.Start();
             task2.Start();
+            task3.Start();
 
 
 
